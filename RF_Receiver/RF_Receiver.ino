@@ -28,7 +28,7 @@
 
 
 #define PROGNAME               "RF_RECEIVER"
-#define PROGVERS               "2.5"
+#define PROGVERS               "2.5-ARC"
 
 #define PIN_RECEIVE            2
 #define PIN_LED                13 // Message-LED
@@ -178,9 +178,47 @@ void sendPT2262(char* triStateMessage) {
   enableReceive();
 }
 
+//============================== ARC_Send =========================================
+byte ARCrepetition = 6;
+#define DEFAULT_ARCclock 270
+int ARCbaseduration = DEFAULT_ARCclock;
+
+void ARC_transmit(int nHighPulses, int nLowPulses) {
+  digitalWrite(PIN_SEND, HIGH);
+  delayMicroseconds(ARCbaseduration * nHighPulses);
+  digitalWrite(PIN_SEND, LOW);
+  delayMicroseconds(ARCbaseduration * nLowPulses);
+}
+
+void sendARC(char* triStateMessage) {
+  disableReceive();
+  for (int i = 0; i < ARCrepetition; i++) {
+    unsigned int pos = 0;
+    ARC_transmit(1,10);  // Send sync
+    while (triStateMessage[pos] != '\0') {
+      switch(triStateMessage[pos]) {
+      case '0':
+        ARC_transmit(1,1);
+        ARC_transmit(1,5);
+        break;
+      case 'F':
+        ARC_transmit(1,1);
+        ARC_transmit(1,1);
+        break;
+      case '1':
+        ARC_transmit(1,5);
+        ARC_transmit(1,1);
+        break;
+      }
+      pos++;
+    }
+  }
+  enableReceive();
+}
 
 //================================= Kommandos ======================================
 void IT_CMDs(String cmd);
+void ARC_CMDs(String cmd);
 
 void HandleCommand(String cmd)
 {
@@ -189,7 +227,7 @@ void HandleCommand(String cmd)
 
   // ?: Kommandos anzeigen
   if (cmd.equals("?")) {
-    Serial.println("? Use one of V i f d h t R q");//FHEM Message
+    Serial.println("? Use one of V i a f d h t R q");//FHEM Message
   }
   // V: Version
   else if (cmd.startsWith("V")) {
@@ -202,6 +240,10 @@ void HandleCommand(String cmd)
   // i: Intertechno
   else if (cmd.startsWith("i")) {
     IT_CMDs(cmd);
+  }
+  // a: ARC
+  else if (cmd.startsWith("a")) {
+    ARC_CMDs(cmd);
   }
   // t: Uptime
   else if (cmd.startsWith("t")) {
@@ -243,7 +285,7 @@ void IT_CMDs(String cmd) {
     {
        ITbaseduration=420; // Default Baseduration
     }
-    sendPT2262(msg);
+    sendARC(msg);
     digitalWrite(PIN_LED,LOW);
     Serial.println(cmd);
   }
@@ -255,6 +297,59 @@ void IT_CMDs(String cmd) {
     cPrint += String(ITrepetition);
     cPrint += " ";
     cPrint += String(ITbaseduration);
+    Serial.println(cPrint);
+  }
+}
+
+void ARC_CMDs(String cmd) {
+
+  // Set ARC repetition
+  if (cmd.startsWith("ar")) {
+    char msg[3];
+    cmd.substring(2).toCharArray(msg,3);
+    ARCrepetition = atoi(msg);
+    Serial.println(cmd);
+  }
+  // Send ARC switch command
+  else if (cmd.startsWith("as")) {
+    digitalWrite(PIN_LED,HIGH);
+    char msg[33];
+    cmd.substring(2).toCharArray(msg,33); //why longer than 32
+    if (cmd.length() > 34)
+    {
+       ARCbaseduration=cmd.substring(4).toInt(); // Default Baseduration
+    }
+    else
+    {
+       ARCbaseduration=DEFAULT_ARCclock; // Default Baseduration
+    }
+    sendARC(msg);
+    digitalWrite(PIN_LED,LOW);
+    Serial.println(cmd);
+  }
+  // Send ARC dimm command
+  else if (cmd.startsWith("ad")) {
+    digitalWrite(PIN_LED,HIGH);
+    char msg[37];
+    cmd.substring(2).toCharArray(msg,37); //why longer than 36
+    if (cmd.length() > 36)
+    {
+       ARCbaseduration=cmd.substring(4).toInt(); // Default Baseduration
+    }
+    else
+    {
+       ARCbaseduration=DEFAULT_ARCclock; // Default Baseduration
+    }
+    sendARC(msg);
+    digitalWrite(PIN_LED,LOW);
+    Serial.println(cmd);
+  }
+  // Get ARC parameters
+  else if (cmd.startsWith("ap")) {
+    String cPrint = "ARCParams: ";
+    cPrint += String(ARCrepetition);
+    cPrint += " ";
+    cPrint += String(ARCbaseduration);
     Serial.println(cPrint);
   }
 }
