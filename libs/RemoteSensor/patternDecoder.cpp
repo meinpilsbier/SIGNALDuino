@@ -578,6 +578,8 @@ void patternDecoder::printNewITMessage(){
 			msgChar = '0';
 		else if (message[idx]==1 & message[idx+1]==0)
 			msgChar = '1';
+		else if (message[idx]==0 & message[idx+1]==0) //third pattern, represented as 'F' here
+			msgChar = 'F';
 		else
 			msgChar = '?';
 		Serial.print(msgChar);
