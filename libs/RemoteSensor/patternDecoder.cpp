@@ -463,6 +463,28 @@ IT self learning:
 	}
 }
 
+void patternDecoder::checkARCdimm(){
+/*
+ARC dimm:
+	clock: 		270
+	Sync factor: 	10
+	start sequence: [270, -2700] => [1, -10]
+	low pattern:	[270, -270], [270, -1350]  => [1, -1], [1, -5]
+	high pattern:	[270, -1350], [270, -270] => [1, -5], [1, -1]
+	message length:	36 bit
+*/
+	//checkEV1527type(int clockTst, byte startFact, byte lowFact, byte highFact, byte Length)
+	bool valid = checkEV1527type(270, 10, 1, 5, 72);
+	// two bits in Message give one final bit:
+	// 01 => 0, 10 => 1
+	if (valid) {//ok, it's new IT selflearning
+		Serial.print("AD");
+		printNewITMessage();
+		Serial.println();
+		success = true;
+	}
+}
+
 void patternDecoder::checkITold() {
 /*
 IT old with selector:

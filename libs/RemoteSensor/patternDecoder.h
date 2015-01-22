@@ -157,6 +157,7 @@ class patternDecoder : public patternDetector {
 		void checkLogilink();
 		void checkITold();
 		void checkITautolearn();
+		void checkARCdimm();
 		void checkAS();
 
 		byte byteMessage[maxMsgSize];
