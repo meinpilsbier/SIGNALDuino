@@ -81,7 +81,7 @@ void SignalDetectorClass::doDetect()
 			} 
 
 			message[messageLen] = fidx;
-			pattern[fidx] = (pattern[fidx] + *first) / 2; // Moving average
+			pattern[fidx] = (long(pattern[fidx]) + *first) / 2; // Moving average
 			messageLen++;
 			add_new_pattern = false;
 		}
@@ -219,9 +219,9 @@ void SignalDetectorClass::compress_pattern()
 
 				int  sum = histo[idx] + histo[idx2];
 				if (sum == 0)
-					pattern[idx] = (pattern[idx] * histo[idx] / sum) + (pattern[idx2] * histo[idx2] / sum);
+					pattern[idx] = (long(pattern[idx]) * histo[idx] / sum) + (long(pattern[idx2]) * histo[idx2] / sum);
 				else
-					pattern[idx] = (pattern[idx] + pattern[idx2]) / 2;
+					pattern[idx] = (long(pattern[idx]) + pattern[idx2]) / 2;
 				//pattern[idx][0] = (pattern[idx][0]*float(histo[idx]/ sum))+(pattern[idx2][0]*float(histo[idx2]/ sum)); // Store the average of both pattern, may better to calculate the number of stored pattern in message
 				//pattern[idx][0] = (pattern[idx][0]+pattern[idx2][0])/2;
 				pattern[idx2] = 0;

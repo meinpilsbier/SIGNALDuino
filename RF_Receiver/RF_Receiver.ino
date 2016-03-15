@@ -34,7 +34,7 @@
 #define CMP_NEWSD;
 
 #define PROGNAME               "RF_RECEIVER"
-#define PROGVERS               "3.2.0-b15"
+#define PROGVERS               "3.2.0-b16"
 
 #define PIN_RECEIVE            2
 #define PIN_LED                13 // Message-LED
@@ -211,7 +211,7 @@ void setup() {
 
 void cronjob() {
 
-	/*	
+	
 	 const unsigned long  duration = micros() - lastTime;
 	 if (duration > maxPulse) { //Auf Maximalwert prüfen.
 		 //handleInterrupt();
@@ -227,7 +227,7 @@ void cronjob() {
 		#endif // CMP_FIFO
 		lastTime = micros();
 
-	 }*/
+	 }
 	 digitalWrite(PIN_LED, blinkLED);
 	 blinkLED = false;
 
