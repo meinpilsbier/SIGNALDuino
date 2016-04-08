@@ -69,7 +69,7 @@ void SignalDetectorClass::doDetect()
 #if DEBUGDETECT>3
 		Serial.print(F("Pulse: ")); Serial.print(*first); Serial.print(F(", ")); Serial.print(*last);
 		Serial.print(F(", TOL: ")); Serial.print(tol); Serial.print(F(", Found: ")); Serial.print(fidx);
-		Serial.print(F(", pSeq: ")); Serial.print(seq[1]); Serial.print(F(", Vld: ")); Serial.print(valid);
+		Serial.print(F(", Vld: ")); Serial.print(valid);
 		Serial.print(F(", mLen: ")); Serial.print(messageLen);
 #endif
 
