@@ -84,8 +84,9 @@ public:
 
 	bool m_truncated;     // Identify if message has been truncated
 	bool m_overflow;
-
+#ifndef UNITTEST
 protected:
+#endif;
 	uint16_t tol;                           // calculated tolerance for signal
 	uint8_t bitcnt;
 	status state;                           // holds the status of the detector
@@ -132,7 +133,10 @@ public:
 	const bool isManchester();
 	void reset();
 
+#ifndef UNITTEST
 private:
+#endif
+
 	BitStore<30> ManchesterBits;       // A store using 1 bit for every value stored. It's used for storing the Manchester bit data in a efficent way
 	SignalDetectorClass *pdec;
 	int8_t longlow;
